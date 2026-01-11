@@ -1,0 +1,29 @@
+{
+  "name": "griot-and-grits-community-app",
+  "version": "1.0.0",
+  "description": "Preserving Black history through family oral histories powered by AI",
+  "private": true,
+  "scripts": {
+    "android": "cd mobile && npm run android",
+    "ios": "cd mobile && npm run ios",
+    "start": "cd mobile && npm start",
+    "test": "cd mobile && npm test",
+    "lint": "cd mobile && npm run lint",
+    "install:mobile": "cd mobile && npm install",
+    "pod-install": "cd mobile/ios && pod install",
+    "clean": "cd mobile && rm -rf node_modules && cd ios && pod deintegrate && cd ../.. && npm run install:mobile && npm run pod-install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shgriffi/community-app.git"
+  },
+  "keywords": [
+    "react-native",
+    "mobile",
+    "oral-history",
+    "ai",
+    "family-history"
+  ],
+  "author": "Griot and Grits",
+  "license": "MIT"
+}
