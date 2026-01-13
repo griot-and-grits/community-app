@@ -33,6 +33,7 @@ export const DebugScreen = () => {
     pauseRecording,
     resumeRecording,
     stopRecording,
+    updateDuration,
     reset: resetRecording,
   } = useRecordingStore();
 
@@ -47,6 +48,24 @@ export const DebugScreen = () => {
 
     return unsubscribe;
   }, []);
+
+  // Update recording duration timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isRecording && !isPaused) {
+      // Update duration every second
+      interval = setInterval(() => {
+        updateDuration(duration + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isRecording, isPaused, duration, updateDuration]);
 
   // Simulate recording
   const handleStartRecording = () => {
