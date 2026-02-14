@@ -50,7 +50,7 @@ start-emulator.bat
 Open a terminal in the `mobile` directory and run:
 
 ```bash
-cd c:\dev\griot_grits\community-app\mobile
+cd mobile
 npm start
 ```
 
@@ -61,7 +61,7 @@ Keep this terminal open - it's the JavaScript bundler.
 **Open a NEW terminal** (keep Metro running in the first one) and run:
 
 ```bash
-cd c:\dev\griot_grits\community-app\mobile
+cd mobile
 cd android
 gradlew.bat app:installDebug
 ```
@@ -73,7 +73,7 @@ The app should automatically launch on your emulator!
 If you have an emulator already running:
 
 ```bash
-cd c:\dev\griot_grits\community-app\mobile
+cd mobile
 npm run android
 ```
 
@@ -103,14 +103,14 @@ check-devices.bat
 ### "gradlew.bat is not recognized"
 Run the command from the `mobile/android` directory:
 ```bash
-cd c:\dev\griot_grits\community-app\mobile\android
+cd android
 gradlew.bat app:installDebug
 ```
 
 ### Build Fails
 Clean and rebuild:
 ```bash
-cd c:\dev\griot_grits\community-app\mobile
+cd mobile
 npm run android:clean
 npm run android:build
 ```
