@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+type VideoQuality = 'low' | 'medium' | 'high' | 'max';
+
 interface RecordingState {
   isRecording: boolean;
   isPaused: boolean;
@@ -7,6 +9,7 @@ interface RecordingState {
   startTime: number | null;
   pauseTime: number | null;
   filePath: string | null;
+  quality: VideoQuality;
 
   // Actions
   startRecording: (filePath: string) => void;
@@ -14,6 +17,8 @@ interface RecordingState {
   resumeRecording: () => void;
   stopRecording: () => void;
   updateDuration: (duration: number) => void;
+  updateFilePath: (filePath: string) => void;
+  setQuality: (quality: VideoQuality) => void;
   reset: () => void;
 }
 
@@ -24,6 +29,7 @@ const initialState = {
   startTime: null,
   pauseTime: null,
   filePath: null,
+  quality: 'high' as VideoQuality,
 };
 
 export const useRecordingStore = create<RecordingState>((set, get) => ({
@@ -71,6 +77,14 @@ export const useRecordingStore = create<RecordingState>((set, get) => ({
 
   updateDuration: (duration) => {
     set({ duration });
+  },
+
+  updateFilePath: (filePath) => {
+    set({ filePath });
+  },
+
+  setQuality: (quality) => {
+    set({ quality });
   },
 
   reset: () => {

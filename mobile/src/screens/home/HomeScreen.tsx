@@ -7,8 +7,10 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
+import { Logo } from '@/components/branding/Logo';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
@@ -20,19 +22,25 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
  * Shows welcome message, quick actions, and app status
  */
 export const HomeScreen = () => {
+  const navigation = useNavigation();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const networkStatus = useUIStore((state) => state.networkStatus);
 
   const handleRecord = () => {
-    // TODO: Navigate to recording screen (Phase 3)
-    console.log('Record button pressed');
+    navigation.navigate('Recording' as never);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        {/* Logo Header */}
+        <View style={styles.logoSection}>
+          <Logo size="large" />
+          <Text style={styles.tagline}>Preserving African American Stories for Generations</Text>
+        </View>
+
         {/* Welcome Section */}
         <View style={styles.section}>
           <Text style={styles.greeting}>Welcome back,</Text>
@@ -131,6 +139,18 @@ const styles = StyleSheet.create({
   content: {
     padding: Spacing.lg,
     paddingBottom: Spacing.xxl,
+  },
+  logoSection: {
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+    paddingTop: Spacing.md,
+  },
+  tagline: {
+    ...Typography.body,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    marginTop: Spacing.md,
+    fontStyle: 'italic',
   },
   section: {
     marginBottom: Spacing.xl,

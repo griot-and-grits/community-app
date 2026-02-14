@@ -1,7 +1,7 @@
-import { Upload, startUpload, getUploadStatus, UploadOptions } from 'react-native-background-upload';
+import Upload, { MultipartUploadOptions } from 'react-native-background-upload';
 import { useUploadQueueStore } from '@/store/uploadQueueStore';
 import { EncryptionService } from '../encryption/EncryptionService';
-import RN FS from 'react-native-fs';
+import RNFS from 'react-native-fs';
 
 export interface BackgroundUploadOptions {
   uploadId: string;
@@ -63,7 +63,7 @@ class BackgroundUploadService {
       }
 
       // Configure upload options
-      const uploadOptions: UploadOptions = {
+      const uploadOptions: MultipartUploadOptions = {
         url: uploadUrl,
         path: filePath,
         method: 'POST',
@@ -88,23 +88,22 @@ class BackgroundUploadService {
       };
 
       // Start upload
-      const nativeUploadId = await startUpload(uploadOptions);
+      const nativeUploadId = await Upload.startUpload(uploadOptions);
       this.activeUploads.set(uploadId, nativeUploadId);
 
       console.log(`[BackgroundUploadService] Upload started with native ID: ${nativeUploadId}`);
 
       // Set up progress listener
       Upload.addListener('progress', nativeUploadId, (data) => {
-        const progress = (data.totalBytesSent / data.totalBytesExpectedToSend) * 100;
-        console.log(`[BackgroundUploadService] Progress: ${progress.toFixed(1)}%`);
+        console.log(`[BackgroundUploadService] Progress: ${data.progress}%`);
 
         if (onProgress) {
-          onProgress(uploadId, progress);
+          onProgress(uploadId, data.progress);
         }
 
         // Update queue store
         const uploadQueueStore = useUploadQueueStore.getState();
-        uploadQueueStore.updateProgress(uploadId, data.totalBytesSent, 0); // Chunk tracking handled separately
+        uploadQueueStore.updateProgress(uploadId, data.progress, 0); // Chunk tracking handled separately
         uploadQueueStore.updateStatus(uploadId, 'uploading');
       });
 
@@ -186,21 +185,10 @@ class BackgroundUploadService {
   }
 
   /**
-   * Get upload status
+   * Check if upload is active
    */
-  async getUploadStatus(uploadId: string): Promise<any> {
-    const nativeUploadId = this.activeUploads.get(uploadId);
-    if (!nativeUploadId) {
-      return null;
-    }
-
-    try {
-      const status = await getUploadStatus(nativeUploadId);
-      return status;
-    } catch (error) {
-      console.error('[BackgroundUploadService] Failed to get upload status:', error);
-      return null;
-    }
+  isUploadInProgress(uploadId: string): boolean {
+    return this.activeUploads.has(uploadId);
   }
 
   /**
@@ -208,13 +196,6 @@ class BackgroundUploadService {
    */
   getActiveUploads(): string[] {
     return Array.from(this.activeUploads.keys());
-  }
-
-  /**
-   * Check if upload is active
-   */
-  isUploadActive(uploadId: string): boolean {
-    return this.activeUploads.has(uploadId);
   }
 }
 
