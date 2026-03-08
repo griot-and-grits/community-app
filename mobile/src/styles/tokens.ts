@@ -6,18 +6,21 @@
  */
 
 export const Colors = {
-  // Primary brand colors
-  primary: '#a94728',
-  primaryDark: '#8b3a1f',
-  primaryLight: '#c15a3a',
+  // Primary brand colors from griotandgrits.org
+  primary: '#ae2c24',        // Primary red
+  secondary: '#282420',      // Dark brown/black
+  tertiary: '#f1b918',       // Gold/yellow
+  accent1: '#f28f1f',        // Orange
+  accent2: '#d8a373',        // Tan/beige
 
   // Gradient colors
-  primaryGradientStart: '#a94728',
-  primaryGradientEnd: '#8b3a1f',
+  primaryGradientStart: '#ae2c24',
+  primaryGradientEnd: '#282420',
 
   // Neutral colors
   white: '#ffffff',
   black: '#000000',
+  cream: '#eceae8',          // Brand background color
   gray100: '#f5f5f5',
   gray200: '#e5e5e5',
   gray300: '#d4d4d4',
@@ -30,17 +33,17 @@ export const Colors = {
 
   // Semantic colors
   success: '#22c55e',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  info: '#3b82f6',
+  warning: '#f1b918',        // Using brand tertiary for warnings
+  error: '#ae2c24',          // Using brand primary for errors
+  info: '#f28f1f',           // Using brand accent1 for info
 
   // UI element colors (light theme)
-  background: '#ffffff',
-  surface: '#f5f5f5',
-  textPrimary: '#171717',
+  background: '#eceae8',     // Brand cream background
+  surface: '#ffffff',
+  textPrimary: '#282420',    // Brand secondary for text
   textSecondary: '#737373',
   textOnPrimary: '#ffffff',
-  border: '#e5e5e5',
+  border: '#d8a373',         // Brand accent2 for borders
   disabled: '#d4d4d4',
 
   // Elevation shadows

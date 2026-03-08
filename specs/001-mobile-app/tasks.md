@@ -173,52 +173,52 @@ Tasks marked with `[P]` can be implemented in parallel within their phase. See "
 
 ### Models & DAOs
 
-- [ ] T065 [US1] Implement Story DAO in src/database/dao/StoryDAO.ts with CRUD, sync status queries
+- [X] T065 [US1] Implement Story DAO in src/database/dao/StoryDAO.ts with CRUD, sync status queries
 
 ### Services
 
-- [ ] T066 [US1] Implement VideoRecordingService in src/services/recording/VideoRecordingService.ts with react-native-vision-camera, pause/resume, quality selection
-- [ ] T067 [US1] Implement recording permission checks in VideoRecordingService (camera, microphone)
-- [ ] T068 [US1] Implement interruption handling in VideoRecordingService (incoming calls, app backgrounding)
-- [ ] T069 [US1] Implement 60-minute recording limit with warning at 55 minutes
-- [ ] T070 [US1] Implement StoryService in src/services/story/StoryService.ts with createStory, updateStory, uploadStory
-- [ ] T071 [US1] Integrate encryption in StoryService for local video storage
+- [X] T066 [US1] Implement VideoRecordingService in src/services/recording/VideoRecordingService.ts with react-native-vision-camera, pause/resume, quality selection
+- [X] T067 [US1] Implement recording permission checks in VideoRecordingService (camera, microphone)
+- [X] T068 [US1] Implement interruption handling in VideoRecordingService (incoming calls, app backgrounding)
+- [X] T069 [US1] Implement 60-minute recording limit with warning at 55 minutes
+- [X] T070 [US1] Implement StoryService in src/services/story/StoryService.ts with createStory, updateStory, uploadStory
+- [X] T071 [US1] Integrate encryption in StoryService for local video storage
 
 ### API Integration
 
-- [ ] T072 [US1] Implement story upload API in src/services/api/StoryApi.ts (POST /api/stories, PATCH /api/stories/:id)
-- [ ] T073 [US1] Implement chunked video upload integration with ChunkedUploadService
+- [X] T072 [US1] Implement story upload API in src/services/api/StoryApi.ts (POST /api/stories, PATCH /api/stories/:id)
+- [X] T073 [US1] Implement chunked video upload integration with ChunkedUploadService
 
 ### UI Components
 
-- [ ] T074 [P] [US1] Create RecordingControls component in src/components/recording/RecordingControls.tsx (record, pause, stop buttons)
-- [ ] T075 [P] [US1] Create RecordingTimer component in src/components/recording/RecordingTimer.tsx with elapsed time and limit warning
-- [ ] T076 [P] [US1] Create QualitySelector component in src/components/recording/QualitySelector.tsx (240p, 480p, 720p, 1080p)
-- [ ] T077 [P] [US1] Create PrivacySelector component in src/components/recording/PrivacySelector.tsx (Public, Family Only, Private with explanations)
-- [ ] T078 [P] [US1] Create UploadProgress component in src/components/recording/UploadProgress.tsx with chunk progress
+- [X] T074 [P] [US1] Create RecordingControls component in src/components/recording/RecordingControls.tsx (record, pause, stop buttons)
+- [X] T075 [P] [US1] Create RecordingTimer component in src/components/recording/RecordingTimer.tsx with elapsed time and limit warning
+- [X] T076 [P] [US1] Create QualitySelector component in src/components/recording/QualitySelector.tsx (240p, 480p, 720p, 1080p)
+- [X] T077 [P] [US1] Create PrivacySelector component in src/components/recording/PrivacySelector.tsx (Public, Family Only, Private with explanations)
+- [X] T078 [P] [US1] Create UploadProgress component in src/components/recording/UploadProgress.tsx with chunk progress
 
 ### Screens
 
-- [ ] T079 [US1] Create RecordingScreen in src/screens/recording/RecordingScreen.tsx with camera preview, controls, timer
-- [ ] T080 [US1] Create ReviewScreen in src/screens/recording/ReviewScreen.tsx with playback, privacy selection, upload button
-- [ ] T081 [US1] Implement recording state management in RecordingScreen with recordingStore
-- [ ] T082 [US1] Implement offline detection and queue management in ReviewScreen
-- [ ] T083 [US1] Implement upload success/failure handling with user feedback
+- [X] T079 [US1] Create RecordingScreen in src/screens/recording/RecordingScreen.tsx with camera preview, controls, timer
+- [X] T080 [US1] Create ReviewScreen in src/screens/recording/ReviewScreen.tsx with playback, privacy selection, upload button
+- [X] T081 [US1] Implement recording state management in RecordingScreen with recordingStore
+- [X] T082 [US1] Implement offline detection and queue management in ReviewScreen
+- [X] T083 [US1] Implement upload success/failure handling with user feedback
 
 ### Integration
 
-- [ ] T084 [US1] Wire up recording flow: Home → RecordingScreen → ReviewScreen → Upload
-- [ ] T085 [US1] Test offline recording and automatic upload when online
-- [ ] T086 [US1] Test pause/resume during recording
-- [ ] T087 [US1] Test privacy setting changes (Public → Family Only → Private)
-- [ ] T088 [US1] Test quality selection impact on file size and upload time
+- [X] T084 [US1] Wire up recording flow: Home → RecordingScreen → ReviewScreen → Upload
+- [X] T085 [US1] Test offline recording and automatic upload when online
+- [X] T086 [US1] Test pause/resume during recording
+- [X] T087 [US1] Test privacy setting changes (Public → Family Only → Private)
+- [X] T088 [US1] Test quality selection impact on file size and upload time
 
 ### E2E Tests
 
-- [ ] T089 [US1] E2E test: Record 30-second video, upload successfully in __tests__/e2e/recording.e2e.ts
-- [ ] T090 [US1] E2E test: Record offline, verify queued, come online, verify uploaded
-- [ ] T091 [US1] E2E test: Pause and resume recording multiple times
-- [ ] T092 [US1] E2E test: Change privacy from Public to Private before upload
+- [X] T089 [US1] E2E test: Record 30-second video, upload successfully in __tests__/e2e/recording.e2e.ts
+- [X] T090 [US1] E2E test: Record offline, verify queued, come online, verify uploaded
+- [X] T091 [US1] E2E test: Pause and resume recording multiple times
+- [X] T092 [US1] E2E test: Change privacy from Public to Private before upload
 
 ---
 
