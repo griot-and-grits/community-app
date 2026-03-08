@@ -15,6 +15,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { Story } from '@/database/models/Story';
 import { useAuthStore } from '@/store/authStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { mockDataGenerator } from '@/services/mock/MockDataGenerator';
 import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
 
@@ -103,12 +104,15 @@ export const ProfileScreen = () => {
   };
 
   const handleEditProfile = () => {
-    // Navigate to edit profile screen
     console.log('Edit profile');
   };
 
-  const handleRecordStory = () => {
-    navigation.navigate('Recording' as never);
+  const handleDebug = () => {
+    navigation.navigate('Debug' as never);
+  };
+
+  const handleLogout = () => {
+    useAuthStore.getState().logout();
   };
 
   const renderTab = (tab: TabType, label: string, icon: string) => (
@@ -168,14 +172,20 @@ export const ProfileScreen = () => {
         <View style={styles.actions}>
           {isOwnProfile ? (
             <>
-              <PrimaryButton
-                title="Record Story"
-                onPress={handleRecordStory}
-              />
               <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
                 <Icon name="pencil-outline" size={20} color={Colors.primary} />
                 <Text style={styles.editButtonText}>Edit Profile</Text>
               </TouchableOpacity>
+              <View style={styles.profileButtons}>
+                <TouchableOpacity style={styles.debugButton} onPress={handleDebug}>
+                  <Icon name="bug" size={18} color={Colors.textSecondary} />
+                  <Text style={styles.debugButtonText}>Developer Tools</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                  <Icon name="logout" size={18} color={Colors.error} />
+                  <Text style={styles.logoutButtonText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
             </>
           ) : (
             <PrimaryButton
@@ -334,6 +344,41 @@ const styles = StyleSheet.create({
   editButtonText: {
     ...Typography.button,
     color: Colors.primary,
+  },
+  profileButtons: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    marginTop: Spacing.sm,
+  },
+  debugButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.medium,
+    backgroundColor: Colors.cream,
+  },
+  debugButtonText: {
+    ...Typography.caption,
+    color: Colors.textSecondary,
+    fontWeight: '600',
+  },
+  logoutButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.medium,
+    backgroundColor: Colors.cream,
+  },
+  logoutButtonText: {
+    ...Typography.caption,
+    color: Colors.error,
+    fontWeight: '600',
   },
   tabs: {
     flexDirection: 'row',
