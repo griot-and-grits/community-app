@@ -1,6 +1,6 @@
 # How to Run the Griot & Grits Mobile App
 
-## Quick Start
+## Quick Start (Emulator)
 
 ### Step 0: Ensure Only Virtual Emulator is Active
 
@@ -77,6 +77,60 @@ cd mobile
 npm run android
 ```
 
+## Deploy to Physical Android Device via USB
+
+### Step 1: Enable Developer Options on your phone
+1. Go to **Settings > About Phone**
+2. Tap **Build Number** 7 times until you see "You are now a developer"
+
+### Step 2: Enable USB Debugging
+1. Go to **Settings > Developer Options**
+2. Turn on **USB Debugging**
+3. Plug in your phone via USB
+4. When prompted on your phone, tap **Allow** to authorize USB debugging
+
+### Step 3: Verify your phone is detected
+```bash
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe devices
+```
+You should see your device listed as `device` (not `offline` or `unauthorized`). If it shows `unauthorized`, check your phone for the authorization prompt.
+
+### Step 4: Start Metro bundler
+```bash
+cd mobile
+npm start
+```
+
+### Step 5: Install the app (in a new terminal)
+```bash
+cd mobile/android
+gradlew.bat app:installDebug
+```
+
+Or use the shortcut:
+```bash
+cd mobile
+npm run android
+```
+
+The app will install and launch on your phone.
+
+### Multiple Devices Connected
+
+If both an emulator and your phone are connected, ADB may fail with a "more than one device" error. Either close the emulator first, or target your phone directly:
+
+```bash
+# Get your device serial from the devices list
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe devices
+
+# Install to a specific device
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe -s <device-serial> install android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Replace `<device-serial>` with the serial shown in the `adb devices` output.
+
+---
+
 ## Troubleshooting
 
 ### "No online devices found" or "No connected devices"
@@ -99,6 +153,27 @@ check-devices.bat
    %LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe kill-server
    %LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe start-server
    ```
+
+### USB Debugging Blocked by Auto Blocker (Samsung devices)
+
+If USB debugging or app installation is being blocked on a Samsung device, **Auto Blocker** is likely preventing sideloading. To temporarily disable it:
+
+1. Go to **Settings > Security and Privacy > Auto Blocker**
+2. Turn **Auto Blocker OFF**
+3. Confirm by tapping "Turn off" on the warning prompt
+4. Retry your `adb` command or app install
+
+> **WARNING: RE-ENABLE AUTO BLOCKER WHEN YOU ARE DONE DEBUGGING!**
+>
+> Auto Blocker protects your device from installing unauthorized apps, malware,
+> and USB-based attacks. Leaving it disabled is a serious security risk.
+> As soon as you are finished testing:
+>
+> 1. Go to **Settings > Security and Privacy > Auto Blocker**
+> 2. Turn **Auto Blocker back ON**
+> 3. Also turn off **USB Debugging** in Developer Options when not actively debugging
+>
+> **Do not leave Auto Blocker disabled on a device you carry day-to-day.**
 
 ### "gradlew.bat is not recognized"
 Run the command from the `mobile/android` directory:
