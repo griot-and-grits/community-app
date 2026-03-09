@@ -23,7 +23,7 @@ type ProfileScreenRouteProp = RouteProp<{
   Profile: { userId?: string };
 }, 'Profile'>;
 
-type TabType = 'stories' | 'family' | 'saved';
+type TabType = 'stories' | 'saved';
 
 /**
  * ProfileScreen
@@ -69,16 +69,13 @@ export const ProfileScreen = () => {
       let userStories: Story[] = [];
 
       if (activeTab === 'stories') {
-        // Load user's stories
+        // Load user's recorded stories
         userStories = mockDataGenerator.generateUserStories(userId, 10);
       } else if (activeTab === 'saved') {
         // Load saved stories (only for own profile)
         if (isOwnProfile) {
           userStories = mockDataGenerator.generateStories(8);
         }
-      } else if (activeTab === 'family') {
-        // Load family stories
-        userStories = mockDataGenerator.generateStories(6);
       }
 
       setStories(userStories);
@@ -97,6 +94,10 @@ export const ProfileScreen = () => {
 
   const handleStoryPress = (story: Story) => {
     navigation.navigate('StoryDetail' as never, { storyId: story.id } as never);
+  };
+
+  const handleRecord = () => {
+    navigation.navigate('Recording' as never);
   };
 
   const handleFollow = () => {
@@ -198,49 +199,50 @@ export const ProfileScreen = () => {
 
       {/* Tabs */}
       <View style={styles.tabs}>
-        {renderTab('stories', 'Stories', 'video-outline')}
-        {renderTab('family', 'Family', 'account-group-outline')}
+        {renderTab('stories', 'My Stories', 'video-outline')}
         {isOwnProfile && renderTab('saved', 'Saved', 'bookmark-outline')}
       </View>
     </View>
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Icon
-        name={activeTab === 'stories' ? 'video-outline' : 'bookmark-outline'}
-        size={64}
-        color={Colors.textSecondary}
-      />
-      <Text style={styles.emptyTitle}>
-        {activeTab === 'stories' ? 'No Stories Yet' : 'No Saved Stories'}
-      </Text>
-      <Text style={styles.emptyText}>
-        {activeTab === 'stories'
-          ? 'Start recording to share your family\'s oral history.'
-          : 'Stories you save will appear here.'}
-      </Text>
+  const renderEmpty = () => {
+    if (loading) {
+      return <LoadingSpinner message="Loading..." />;
+    }
+    return (
+      <View style={styles.emptyContainer}>
+        <Icon
+          name={activeTab === 'stories' ? 'video-outline' : 'bookmark-outline'}
+          size={64}
+          color={Colors.textSecondary}
+        />
+        <Text style={styles.emptyTitle}>
+          {activeTab === 'stories' ? 'No Stories Yet' : 'No Saved Stories'}
+        </Text>
+        <Text style={styles.emptyText}>
+          {activeTab === 'stories'
+            ? 'Start recording to preserve your family\'s oral history.'
+            : 'Stories you save will appear here.'}
+        </Text>
+      </View>
+    );
+  };
+
+  const renderListHeader = () => (
+    <View>
+      {renderHeader()}
     </View>
   );
-
-  if (loading && !refreshing && stories.length === 0) {
-    return (
-      <SafeAreaView style={styles.container}>
-        {renderHeader()}
-        <LoadingSpinner message="Loading profile..." />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={stories}
+        data={loading ? [] : stories}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <StoryCard story={item} onPress={handleStoryPress} />
         )}
-        ListHeaderComponent={renderHeader}
+        ListHeaderComponent={renderListHeader}
         ListEmptyComponent={renderEmpty}
         contentContainerStyle={styles.list}
         refreshControl={
@@ -405,6 +407,10 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: Colors.primary,
+  },
+  recordButtonContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   emptyContainer: {
     alignItems: 'center',

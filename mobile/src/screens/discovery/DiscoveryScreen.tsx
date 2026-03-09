@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   RefreshControl,
   Text,
+  TextInput,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
@@ -13,11 +14,11 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { VideoCard } from '@/components/story/VideoCard';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { VideoMetadata, GRIOT_VIDEOS, getFeaturedVideos, getVideosByTag, getVideosByPerson } from '@/data/videos';
-import { TAGS, PEOPLE, getPopularTags } from '@/data/filters';
+import { VideoMetadata, GRIOT_VIDEOS, getFeaturedVideos, getVideosByTag, getVideosByPerson, getVideosByFamilyMembers } from '@/data/videos';
+import { TAGS, PEOPLE, getPopularTags, getFamilyMembers } from '@/data/filters';
 import { Colors, Spacing, Typography, BorderRadius } from '@/styles/tokens';
 
-type FilterType = 'all' | 'featured' | 'tag' | 'person';
+type FilterType = 'all' | 'featured' | 'family' | 'tag' | 'person';
 
 /**
  * DiscoveryScreen
@@ -32,11 +33,13 @@ export const DiscoveryScreen = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Load initial videos
   useEffect(() => {
     loadVideos();
-  }, [filter, selectedTag, selectedPerson]);
+  }, [filter, selectedTag, selectedPerson, searchQuery]);
 
   const loadVideos = async () => {
     setLoading(true);
@@ -58,6 +61,9 @@ export const DiscoveryScreen = () => {
             filteredVideos = GRIOT_VIDEOS;
           }
           break;
+        case 'family':
+          filteredVideos = getVideosByFamilyMembers(getFamilyMembers());
+          break;
         case 'person':
           if (selectedPerson) {
             filteredVideos = getVideosByPerson(selectedPerson);
@@ -70,6 +76,18 @@ export const DiscoveryScreen = () => {
           filteredVideos = [...GRIOT_VIDEOS].sort((a, b) =>
             new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
           );
+      }
+
+      // Apply search query
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredVideos = filteredVideos.filter(video =>
+          video.title.toLowerCase().includes(query) ||
+          video.interviewees.some(i => i.toLowerCase().includes(query)) ||
+          video.description.toLowerCase().includes(query) ||
+          video.tags.some(t => t.toLowerCase().includes(query)) ||
+          video.people.some(p => p.toLowerCase().includes(query))
+        );
       }
 
       setVideos(filteredVideos);
@@ -127,16 +145,21 @@ export const DiscoveryScreen = () => {
     </TouchableOpacity>
   );
 
+  const handleSearchSubmit = () => {
+    setSearchQuery(searchInput);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setSearchQuery('');
+  };
+
   const renderHeader = () => (
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>Griot & Grits Stories</Text>
-      <Text style={styles.headerSubtitle}>
-        Preserving Black History Through Family Oral Histories
-      </Text>
-
       {/* Main Filters */}
       <View style={styles.filters}>
         {renderFilterButton('all', 'All Stories', 'view-grid-outline')}
+        {renderFilterButton('family', 'Family', 'account-group')}
         {renderFilterButton('featured', 'Featured', 'star')}
       </View>
 
@@ -174,6 +197,7 @@ export const DiscoveryScreen = () => {
           <Icon name="video-outline" size={16} color={Colors.textSecondary} />
           <Text style={styles.resultCountText}>
             {videos.length} {videos.length === 1 ? 'story' : 'stories'}
+            {filter === 'family' && ' · My Family'}
             {selectedTag && ` · ${selectedTag}`}
             {selectedPerson && ` · ${selectedPerson}`}
           </Text>
@@ -182,29 +206,50 @@ export const DiscoveryScreen = () => {
     </View>
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Icon name="video-outline" size={64} color={Colors.textSecondary} />
-      <Text style={styles.emptyTitle}>No Stories Found</Text>
-      <Text style={styles.emptyText}>
-        Try selecting different filters to explore more stories
-      </Text>
+  const renderEmpty = () => {
+    if (loading) {
+      return <LoadingSpinner message="Loading stories..." />;
+    }
+    return (
+      <View style={styles.emptyContainer}>
+        <Icon name="video-outline" size={64} color={Colors.textSecondary} />
+        <Text style={styles.emptyTitle}>No Stories Found</Text>
+        <Text style={styles.emptyText}>
+          Try selecting different filters to explore more stories
+        </Text>
+      </View>
+    );
+  };
+
+  const renderSearchBar = () => (
+    <View style={styles.searchRow}>
+      <View style={styles.searchContainer}>
+        <Icon name="magnify" size={20} color={Colors.textSecondary} style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search stories, people, or topics..."
+          placeholderTextColor={Colors.textSecondary}
+          value={searchInput}
+          onChangeText={setSearchInput}
+          onSubmitEditing={handleSearchSubmit}
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="search"
+        />
+        {searchInput.length > 0 && (
+          <TouchableOpacity onPress={handleClearSearch} style={styles.clearButton}>
+            <Icon name="close-circle" size={18} color={Colors.textSecondary} />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 
-  if (loading && !refreshing) {
-    return (
-      <SafeAreaView style={styles.container}>
-        {renderHeader()}
-        <LoadingSpinner message="Loading stories..." />
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
+      {renderSearchBar()}
       <FlatList
-        data={videos}
+        data={loading ? [] : videos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <VideoCard video={item} onPress={handleVideoPress} showFeaturedBadge />
@@ -239,15 +284,30 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.md,
     paddingBottom: Spacing.md,
   },
-  headerTitle: {
-    ...Typography.h2,
-    color: Colors.textPrimary,
-    marginBottom: Spacing.xs,
+  searchRow: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
   },
-  headerSubtitle: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.medium,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: Spacing.sm,
+  },
+  searchIcon: {
+    marginRight: Spacing.xs,
+  },
+  searchInput: {
+    flex: 1,
     ...Typography.body,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.lg,
+    color: Colors.textPrimary,
+    paddingVertical: Spacing.sm,
+  },
+  clearButton: {
+    padding: Spacing.xs,
   },
   filters: {
     flexDirection: 'row',

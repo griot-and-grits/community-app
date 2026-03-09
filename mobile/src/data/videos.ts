@@ -25,6 +25,9 @@ export interface VideoMetadata {
   tags: string[];
   people: string[];
   podcastUrl?: string;
+  viewCount?: number;
+  likeCount?: number;
+  shareCount?: number;
 }
 
 export const GRIOT_VIDEOS: VideoMetadata[] = [
@@ -315,6 +318,29 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
   }
 ];
 
+// Generate deterministic mock engagement stats from video ID
+const generateMockStats = (id: string) => {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash |= 0;
+  }
+  const seed = Math.abs(hash);
+  return {
+    viewCount: 500 + (seed % 9500),
+    likeCount: 20 + (seed % 480),
+    shareCount: 5 + (seed % 95),
+  };
+};
+
+// Apply mock stats to all videos
+GRIOT_VIDEOS.forEach(video => {
+  const stats = generateMockStats(video.id);
+  video.viewCount = stats.viewCount;
+  video.likeCount = stats.likeCount;
+  video.shareCount = stats.shareCount;
+});
+
 export const getFeaturedVideos = (): VideoMetadata[] => {
   return GRIOT_VIDEOS.filter(v => v.featured);
 };
@@ -329,4 +355,16 @@ export const getVideosByTag = (tag: string): VideoMetadata[] => {
 
 export const getVideosByPerson = (person: string): VideoMetadata[] => {
   return GRIOT_VIDEOS.filter(v => v.people.includes(person));
+};
+
+export const getVideosByFamilyMembers = (memberNames: string[]): VideoMetadata[] => {
+  return GRIOT_VIDEOS.filter(v =>
+    v.interviewees.some(name => memberNames.includes(name)) ||
+    v.people.some(name => memberNames.includes(name))
+  );
+};
+
+export const getYouTubeVideoId = (url: string): string | null => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+  return match ? match[1] : null;
 };

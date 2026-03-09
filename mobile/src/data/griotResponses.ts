@@ -1,5 +1,6 @@
 import { SourceCitation, SuggestedQuestion } from '@/types/chat';
 import { GRIOT_VIDEOS, VideoMetadata } from './videos';
+import { MOCK_FAMILY_MEMBERS } from './filters';
 
 export const GRIOT_WELCOME_MESSAGE =
   "Welcome, family. I am the Griot — the keeper of stories, the voice of memory. " +
@@ -8,33 +9,45 @@ export const GRIOT_WELCOME_MESSAGE =
   "and I will do my best to guide you through their words.";
 
 export const SUGGESTED_QUESTIONS: SuggestedQuestion[] = [
+  // My Family prompts
   {
     id: 'sq1',
+    text: 'Tell me about my family tree',
+    icon: 'family-tree',
+  },
+  {
+    id: 'sq2',
+    text: 'Are there any love stories in my family?',
+    icon: 'heart',
+  },
+  {
+    id: 'sq3',
+    text: 'Has my family served in the military?',
+    icon: 'shield-star',
+  },
+  {
+    id: 'sq4',
+    text: 'What historic events has my family lived through?',
+    icon: 'history',
+  },
+  // General Black stories prompts
+  {
+    id: 'sq5',
     text: 'What stories do we have about North Carolina?',
     icon: 'map-marker',
   },
   {
-    id: 'sq2',
-    text: 'Tell me about our elders\' childhood experiences',
-    icon: 'account-child',
-  },
-  {
-    id: 'sq3',
-    text: 'What can you tell me about resilience in our family?',
-    icon: 'arm-flex',
-  },
-  {
-    id: 'sq4',
-    text: 'Are there any love stories in our family history?',
-    icon: 'heart',
-  },
-  {
-    id: 'sq5',
+    id: 'sq6',
     text: 'What do we know about the Great Migration?',
     icon: 'train',
   },
   {
-    id: 'sq6',
+    id: 'sq7',
+    text: 'What can you tell me about resilience in our community?',
+    icon: 'arm-flex',
+  },
+  {
+    id: 'sq8',
     text: 'Who are the storytellers in our collection?',
     icon: 'account-group',
   },
@@ -45,12 +58,37 @@ interface MockResponse {
   citations: SourceCitation[];
 }
 
+const FAMILY_KEYWORDS = [
+  'my family', 'our family', 'family history', 'family stories',
+  'family tree', 'family served', 'family lived',
+  'mcduffie', 'mcduffies', 'the mcduffie',
+];
+
+function isFamilyQuery(message: string): boolean {
+  const lower = message.toLowerCase();
+  return FAMILY_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+function isMcDuffieMember(video: VideoMetadata): boolean {
+  const familyLower = MOCK_FAMILY_MEMBERS.map(n => n.toLowerCase());
+  return (
+    video.interviewees.some(name => familyLower.includes(name.toLowerCase())) ||
+    video.people.some(name => familyLower.includes(name.toLowerCase()))
+  );
+}
+
 function matchVideos(message: string): VideoMetadata[] {
   const lower = message.toLowerCase();
+  const familyQuery = isFamilyQuery(lower);
   const matches: { video: VideoMetadata; score: number }[] = [];
 
   for (const video of GRIOT_VIDEOS) {
     let score = 0;
+
+    // For family queries, heavily boost McDuffie family videos
+    if (familyQuery && isMcDuffieMember(video)) {
+      score += 10;
+    }
 
     // Check interviewee names
     for (const name of video.interviewees) {
@@ -130,6 +168,18 @@ function buildResponse(message: string, matchedVideos: VideoMetadata[]): string 
 function getContextualIntro(message: string): string {
   const lower = message.toLowerCase();
 
+  // Family / McDuffie-specific intros (check first for priority)
+  if (lower.includes('mcduffie') || lower.includes('mcduffies')) {
+    return "The McDuffie family has shared some truly powerful stories. Ty and Sharon McDuffie have preserved memories that span love, service, and historic moments that shaped their lives.";
+  }
+  if (isFamilyQuery(lower) && (lower.includes('love') || lower.includes('marriage') || lower.includes('wife') || lower.includes('husband') || lower.includes('met'))) {
+    return "The McDuffie family has a beautiful love story. Ty and Sharon's journey together began before his Air Force service and has been a foundation of your family ever since.";
+  }
+  if (isFamilyQuery(lower)) {
+    return "The McDuffie family has been building a rich collection of stories. From moments of love to living through historic events, your family's voices carry powerful memories.";
+  }
+
+  // General topic intros
   if (lower.includes('north carolina') || lower.includes('carolina')) {
     return "North Carolina runs deep in your family's roots. Several of our storytellers have strong ties to the Tar Heel State.";
   }
@@ -164,7 +214,72 @@ function getGenericResponse(message: string): string {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
+function getFamilyResponse(message: string): MockResponse | null {
+  const lower = message.toLowerCase();
+  if (!isFamilyQuery(lower)) return null;
+
+  const familyVideos = GRIOT_VIDEOS.filter(v => isMcDuffieMember(v));
+  const citations = buildCitations(familyVideos);
+
+  // Family tree
+  if (lower.includes('family tree') || lower.includes('related') || lower.includes('who is') || lower.includes('tell me about my family')) {
+    return {
+      content:
+        "Your family tree holds deep roots. Here's what we know from the stories preserved so far:\n\n" +
+        "Ty McDuffie and Sharon Burwell McDuffie are husband and wife. They met before Ty left for Air Force basic training in 1992 — a love story that has anchored your family for over three decades.\n\n" +
+        "Sharon McDuffie, also part of the family, has shared her own powerful memories, including living through September 11, 2001 in Raleigh, North Carolina.\n\n" +
+        "There are more branches of this tree waiting to be recorded. Every conversation you capture adds another generation to the story.",
+      citations,
+    };
+  }
+
+  // Love stories in my family
+  if (lower.includes('love') || lower.includes('marriage') || lower.includes('wife') || lower.includes('husband') || lower.includes('met') || lower.includes('romance')) {
+    return {
+      content:
+        "Your family has a beautiful love story at its heart.\n\n" +
+        "Ty McDuffie recalls the moment he met Sharon Burwell before heading off to Air Force basic training in 1992. " +
+        "He was at MEPS (Military Entrance Processing Station) when their paths crossed — and that meeting changed the course of both their lives. " +
+        "They went on to build a life and a family together.\n\n" +
+        "This is the kind of story that future generations will treasure. Have other family members share their love stories too — every one of them matters.",
+      citations,
+    };
+  }
+
+  // Military service in my family
+  if (lower.includes('military') || lower.includes('served') || lower.includes('air force') || lower.includes('navy') || lower.includes('army') || lower.includes('service')) {
+    return {
+      content:
+        "Your family has a proud history of military service.\n\n" +
+        "Ty McDuffie served in the United States Air Force. His story about heading to basic training in 1992 captures a pivotal moment — " +
+        "not only in his military career, but in his personal life, as it was right before basic training that he met the love of his life, Sharon Burwell McDuffie.\n\n" +
+        "Military service often shapes families in ways that echo through generations. If there are other veterans in your family, their stories deserve to be captured too.",
+      citations,
+    };
+  }
+
+  // Historic events my family lived through
+  if (lower.includes('historic') || lower.includes('event') || lower.includes('lived through') || lower.includes('history') || lower.includes('911') || lower.includes('september')) {
+    return {
+      content:
+        "Your family has lived through moments that changed the world, and they've preserved those memories for future generations.\n\n" +
+        "Sharon McDuffie shares a deeply personal account of September 11, 2001. She was in Raleigh, North Carolina when the attacks on the World Trade Center unfolded, " +
+        "and her story captures the fear, confusion, and resilience of that day from the perspective of someone watching it all unfold far from New York.\n\n" +
+        "These firsthand accounts of historic events are among the most valuable stories a family can preserve. " +
+        "What other historic moments have your family members witnessed?",
+      citations,
+    };
+  }
+
+  // Generic family fallback — still return McDuffie-specific content
+  return null;
+}
+
 export function generateMockResponse(message: string): MockResponse {
+  // Check for hardcoded family-specific responses first
+  const familyResponse = getFamilyResponse(message);
+  if (familyResponse) return familyResponse;
+
   const matchedVideos = matchVideos(message);
   const content = buildResponse(message, matchedVideos);
   const citations = buildCitations(matchedVideos);

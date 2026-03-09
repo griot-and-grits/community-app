@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ChatBubble } from '@/components/chat/ChatBubble';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
@@ -112,15 +111,7 @@ export const AskTheGriotScreen: React.FC = () => {
           renderItem={renderMessage}
           keyExtractor={keyExtractor}
           contentContainerStyle={styles.messageList}
-          ListHeaderComponent={
-            <View style={styles.header}>
-              <Icon name="book-open-variant" size={40} color={Colors.primary} />
-              <Text style={styles.headerTitle}>Ask the Griot</Text>
-              <Text style={styles.headerSubtitle}>
-                Your family's storyteller and historian
-              </Text>
-            </View>
-          }
+          ListHeaderComponent={null}
           ListFooterComponent={
             <>
               {isNewSession && (
@@ -163,21 +154,6 @@ const styles = StyleSheet.create({
   },
   messageList: {
     paddingBottom: Spacing.md,
-  },
-  header: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing.md,
-  },
-  headerTitle: {
-    ...Typography.h3,
-    color: Colors.textPrimary,
-    marginTop: Spacing.sm,
-  },
-  headerSubtitle: {
-    ...Typography.bodySmall,
-    color: Colors.textSecondary,
-    marginTop: Spacing.xs,
   },
   errorContainer: {
     marginHorizontal: Spacing.md,

@@ -62,6 +62,17 @@ export const PEOPLE: FilterItem[] = [
   { name: "David E. Reid", popularity: 1.0 }
 ];
 
+// Mock family members for development (matches real people in video data)
+export const MOCK_FAMILY_MEMBERS: string[] = [
+  "Ty McDuffie",
+  "Sharon McDuffie",
+  "Sharon Burwell McDuffie",
+];
+
+export const getFamilyMembers = (): string[] => {
+  return MOCK_FAMILY_MEMBERS;
+};
+
 export const getPopularTags = (minPopularity: number = 0.8): FilterItem[] => {
   return TAGS.filter(tag => tag.popularity >= minPopularity);
 };

@@ -6,13 +6,13 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Dimensions,
   Share,
   Linking,
 } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
-import Video from 'react-native-video';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { YouTubePlayer } from '@/components/video/YouTubePlayer';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { VideoMetadata, getVideoById } from '@/data/videos';
 import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
@@ -20,8 +20,6 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
 type VideoDetailRouteProp = RouteProp<{
   VideoDetail: { videoId: string };
 }, 'VideoDetail'>;
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 /**
  * VideoDetailScreen
@@ -31,6 +29,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 export const VideoDetailScreen = () => {
   const route = useRoute<VideoDetailRouteProp>();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const { videoId } = route.params;
 
   const [video, setVideo] = useState<VideoMetadata | null>(null);
@@ -114,17 +113,9 @@ export const VideoDetailScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.lg }}>
         {/* Video Player */}
-        <View style={styles.videoContainer}>
-          <Video
-            source={{ uri: video.videoUrl }}
-            style={styles.video}
-            controls
-            resizeMode="contain"
-            paused={false}
-          />
-        </View>
+        <YouTubePlayer videoUrl={video.videoUrl} />
 
         {/* Story Info */}
         <View style={styles.content}>
@@ -258,14 +249,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scrollView: {
-    flex: 1,
-  },
-  videoContainer: {
-    width: SCREEN_WIDTH,
-    aspectRatio: 16 / 9,
-    backgroundColor: Colors.black,
-  },
-  video: {
     flex: 1,
   },
   content: {

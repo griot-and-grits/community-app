@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { useRecordingStore } from '@/store/recordingStore';
 import { useUploadQueueStore } from '@/store/uploadQueueStore';
@@ -23,6 +24,7 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
 export const DebugScreen = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const insets = useSafeAreaInsets();
   const [connectivityStatus, setConnectivityStatus] = useState<ConnectivityStatus>(
     connectivityMonitor.getStatus()
   );
@@ -137,7 +139,7 @@ export const DebugScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.xxl }]}>
         <Text style={styles.title}>Phase 2 Infrastructure Demo</Text>
 
         {/* Connectivity Monitor */}

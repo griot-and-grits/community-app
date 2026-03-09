@@ -40,7 +40,7 @@ export const LoginScreen = () => {
       <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
       <View style={styles.content}>
         <View style={styles.header}>
-          <Logo size="large" showTitle showTagline />
+          <Logo size="large" showTagline />
         </View>
 
         <View style={styles.actions}>

@@ -20,6 +20,12 @@ export const VideoCard: React.FC<VideoCardProps> = ({
   onPress,
   showFeaturedBadge = true
 }) => {
+  const formatCount = (count: number): string => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    return count.toString();
+  };
+
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -133,10 +139,25 @@ export const VideoCard: React.FC<VideoCardProps> = ({
           )}
         </View>
 
-        {/* Upload Date */}
-        <Text style={styles.uploadDate}>
-          Published {formatDate(video.createdDate)}
-        </Text>
+        {/* Stats */}
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Icon name="eye-outline" size={16} color={Colors.textSecondary} />
+            <Text style={styles.statText}>{formatCount(video.viewCount || 0)}</Text>
+          </View>
+          <View style={styles.stat}>
+            <Icon name="heart-outline" size={16} color={Colors.textSecondary} />
+            <Text style={styles.statText}>{formatCount(video.likeCount || 0)}</Text>
+          </View>
+          <View style={styles.stat}>
+            <Icon name="share-outline" size={16} color={Colors.textSecondary} />
+            <Text style={styles.statText}>{formatCount(video.shareCount || 0)}</Text>
+          </View>
+          <View style={styles.statSpacer} />
+          <Text style={styles.uploadDate}>
+            {formatDate(video.createdDate)}
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -274,9 +295,25 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     alignSelf: 'center',
   },
+  stats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  stat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  statText: {
+    ...Typography.caption,
+    color: Colors.textSecondary,
+  },
+  statSpacer: {
+    flex: 1,
+  },
   uploadDate: {
     ...Typography.caption,
     color: Colors.textSecondary,
-    fontStyle: 'italic',
   },
 });
