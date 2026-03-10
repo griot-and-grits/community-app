@@ -5,9 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import { RecordingControls } from '@/components/recording/RecordingControls';
 import { RecordingTimer } from '@/components/recording/RecordingTimer';
 import { QualitySelector } from '@/components/recording/QualitySelector';
+import { GriotPromptModal } from '@/components/recording/GriotPromptModal';
+import { QuestionOverlay } from '@/components/recording/QuestionOverlay';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { GRIOT_QUESTIONS } from '@/data/griotQuestions';
 import { useRecordingStore } from '@/store/recordingStore';
 import { videoRecordingService, VideoQuality } from '@/services/recording/VideoRecordingService';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Spacing } from '@/styles/tokens';
 
 /**
@@ -17,12 +21,17 @@ import { Colors, Spacing } from '@/styles/tokens';
  */
 export const RecordingScreen = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
 
   const [showWarning, setShowWarning] = useState(false);
   const [cameraActive, setCameraActive] = useState(true);
+  const [showGriotPrompt, setShowGriotPrompt] = useState(true);
+  const [guidedMode, setGuidedMode] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [overlayMinimized, setOverlayMinimized] = useState(false);
 
   const {
     isRecording,
@@ -169,6 +178,29 @@ export const RecordingScreen = () => {
     }
   };
 
+  const handleGuideMe = () => {
+    setShowGriotPrompt(false);
+    setGuidedMode(true);
+    setCurrentQuestionIndex(0);
+  };
+
+  const handleRecordAlone = () => {
+    setShowGriotPrompt(false);
+    setGuidedMode(false);
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < GRIOT_QUESTIONS.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
   // Show permission request
   if (!hasPermission) {
     return (
@@ -216,8 +248,24 @@ export const RecordingScreen = () => {
             />
           </View>
 
+          {/* Guided Mode Question Overlay */}
+          {guidedMode && (
+            <View style={styles.questionSection}>
+              <QuestionOverlay
+                question={GRIOT_QUESTIONS[currentQuestionIndex]}
+                currentIndex={currentQuestionIndex}
+                totalQuestions={GRIOT_QUESTIONS.length}
+                minimized={overlayMinimized}
+                onNext={handleNextQuestion}
+                onPrevious={handlePreviousQuestion}
+                onMinimize={() => setOverlayMinimized(true)}
+                onRestore={() => setOverlayMinimized(false)}
+              />
+            </View>
+          )}
+
           {/* Controls */}
-          <View style={styles.bottomSection}>
+          <View style={[styles.bottomSection, { paddingBottom: insets.bottom + Spacing.xl }]}>
             {!isRecording && (
               <View style={styles.qualityContainer}>
                 <QualitySelector
@@ -240,6 +288,13 @@ export const RecordingScreen = () => {
             </View>
           </View>
         </View>
+
+        {/* Griot Prompt Modal */}
+        <GriotPromptModal
+          visible={showGriotPrompt}
+          onGuideMe={handleGuideMe}
+          onRecordAlone={handleRecordAlone}
+        />
       </View>
     </SafeAreaView>
   );
@@ -260,6 +315,9 @@ const styles = StyleSheet.create({
   topSection: {
     paddingTop: Spacing.lg,
     alignItems: 'center',
+  },
+  questionSection: {
+    justifyContent: 'center',
   },
   bottomSection: {
     paddingBottom: Spacing.xl,

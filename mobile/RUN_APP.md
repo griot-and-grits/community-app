@@ -129,6 +129,47 @@ If both an emulator and your phone are connected, ADB may fail with a "more than
 
 Replace `<device-serial>` with the serial shown in the `adb devices` output.
 
+## Deploy Standalone APK (No Computer Tethering)
+
+Use this when you want to install the app on a phone and test it without being connected to a computer running Metro bundler.
+
+### Step 1: Bundle the JavaScript
+
+This embeds all your JS/React code directly into the APK so Metro is not needed at runtime.
+
+```bash
+cd mobile
+npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
+```
+
+### Step 2: Build the APK
+
+```bash
+cd mobile/android
+gradlew.bat assembleDebug
+```
+
+The APK is generated at: `mobile/android/app/build/outputs/apk/debug/app-debug.apk`
+
+### Step 3: Install the APK
+
+**Via USB:**
+```bash
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe install -r android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+**Via file transfer:** Copy the APK file to your phone (email, cloud drive, USB file transfer) and open it to install.
+
+### Rebuilding After Code Changes
+
+**Important:** Every time you change code (screens, components, data, etc.), you must repeat Steps 1 and 2 to create a new APK with the updated bundle. The standalone APK does not hot-reload — it runs the JS that was bundled at build time.
+
+If the old version keeps installing, uninstall the app first:
+```bash
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe uninstall com.griotgrits.community
+%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe install android/app/build/outputs/apk/debug/app-debug.apk
+```
+
 ---
 
 ## Troubleshooting
@@ -252,5 +293,5 @@ npm test                    # Run tests
 
 ---
 
-**Last Updated**: 2026-02-14
-**Branch**: 003-phase3-recording
+**Last Updated**: 2026-03-07
+**Branch**: 004-ui-updates-ask-griot

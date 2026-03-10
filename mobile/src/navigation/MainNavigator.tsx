@@ -1,23 +1,25 @@
 import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { HomeScreen } from '@/screens/home/HomeScreen';
-import { DebugScreen } from '@/screens/debug/DebugScreen';
 import { DiscoveryScreen } from '@/screens/discovery/DiscoveryScreen';
+import { MyVideosScreen } from '@/screens/videos/MyVideosScreen';
+import { AskTheGriotScreen } from '@/screens/chat/AskTheGriotScreen';
 import { ProfileScreen } from '@/screens/profile/ProfileScreen';
+import { DebugScreen } from '@/screens/debug/DebugScreen';
 import { RecordingScreen } from '@/screens/recording/RecordingScreen';
 import { ReviewScreen } from '@/screens/recording/ReviewScreen';
 import { StoryDetailScreen } from '@/screens/story/StoryDetailScreen';
 import { VideoDetailScreen } from '@/screens/story/VideoDetailScreen';
 import { Logo } from '@/components/branding/Logo';
-import { Colors } from '@/styles/tokens';
+import { useChatStore } from '@/store/chatStore';
+import { Colors, Typography, Spacing } from '@/styles/tokens';
 
 export type MainTabParamList = {
   Home: undefined;
-  Debug: undefined;
-  Discovery: undefined;
-  Family: undefined;
+  MyVideos: undefined;
+  AskTheGriot: undefined;
   Profile: undefined;
 };
 
@@ -28,16 +30,68 @@ export type MainStackParamList = {
   StoryDetail: { storyId: string };
   VideoDetail: { videoId: string };
   Profile: { userId?: string };
+  Debug: undefined;
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
-/**
- * Main Tab Navigator
- *
- * Bottom tab navigation for main app screens
- */
+const GriotHeaderTitle = () => (
+  <View style={headerStyles.titleRow}>
+    <Icon name="book-open-variant" size={22} color={Colors.primary} />
+    <View>
+      <Text style={headerStyles.title}>Ask the Griot</Text>
+      <Text style={headerStyles.subtitle}>Your family's storyteller and historian</Text>
+    </View>
+  </View>
+);
+
+const GriotHeaderRight = () => {
+  const { getActiveSession, createSession } = useChatStore();
+  const session = getActiveSession();
+  const hasMessages = (session?.messages.length || 0) > 0;
+
+  if (!hasMessages) return null;
+
+  return (
+    <TouchableOpacity style={headerStyles.newButton} onPress={() => createSession()}>
+      <Icon name="plus-circle-outline" size={18} color={Colors.white} />
+      <Text style={headerStyles.newButtonText}>New</Text>
+    </TouchableOpacity>
+  );
+};
+
+const headerStyles = StyleSheet.create({
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  title: {
+    ...Typography.h5,
+    color: Colors.textPrimary,
+  },
+  subtitle: {
+    ...Typography.caption,
+    color: Colors.textSecondary,
+  },
+  newButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: 16,
+    marginRight: Spacing.sm,
+  },
+  newButtonText: {
+    ...Typography.bodySmall,
+    color: Colors.white,
+    fontWeight: '700',
+  },
+});
+
 const MainTabs = () => {
   return (
     <Tab.Navigator
@@ -53,7 +107,7 @@ const MainTabs = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={DiscoveryScreen}
         options={{
           headerTitle: () => <Logo size="small" />,
           tabBarLabel: 'Home',
@@ -63,13 +117,30 @@ const MainTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Discovery"
-        component={DiscoveryScreen}
+        name="MyVideos"
+        component={MyVideosScreen}
         options={{
-          title: 'Discover',
-          tabBarLabel: 'Discover',
+          headerTitle: () => (
+            <View style={headerStyles.titleRow}>
+              <Icon name="account-group" size={22} color={Colors.primary} />
+              <Text style={headerStyles.title}>My Family</Text>
+            </View>
+          ),
+          tabBarLabel: 'My Family',
           tabBarIcon: ({ color, size }) => (
-            <Icon name="compass-outline" size={size} color={color} />
+            <Icon name="account-group" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AskTheGriot"
+        component={AskTheGriotScreen}
+        options={{
+          headerTitle: () => <GriotHeaderTitle />,
+          headerRight: () => <GriotHeaderRight />,
+          tabBarLabel: 'Ask Griot',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="book-open-variant" size={size} color={color} />
           ),
         }}
       />
@@ -84,26 +155,10 @@ const MainTabs = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="Debug"
-        component={DebugScreen}
-        options={{
-          title: 'Debug',
-          tabBarLabel: 'Debug',
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="bug" size={size} color={color} />
-          ),
-        }}
-      />
     </Tab.Navigator>
   );
 };
 
-/**
- * Main Navigator
- *
- * Stack navigator that includes tabs and recording flow
- */
 export const MainNavigator = () => {
   return (
     <Stack.Navigator
@@ -154,6 +209,15 @@ export const MainNavigator = () => {
         options={{
           headerShown: true,
           title: 'Profile',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <Stack.Screen
+        name="Debug"
+        component={DebugScreen}
+        options={{
+          headerShown: true,
+          title: 'Developer Tools',
           headerBackTitle: 'Back',
         }}
       />

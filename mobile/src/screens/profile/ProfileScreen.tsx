@@ -15,6 +15,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { Story } from '@/database/models/Story';
 import { useAuthStore } from '@/store/authStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { mockDataGenerator } from '@/services/mock/MockDataGenerator';
 import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
 
@@ -22,7 +23,7 @@ type ProfileScreenRouteProp = RouteProp<{
   Profile: { userId?: string };
 }, 'Profile'>;
 
-type TabType = 'stories' | 'family' | 'saved';
+type TabType = 'stories' | 'saved';
 
 /**
  * ProfileScreen
@@ -68,16 +69,13 @@ export const ProfileScreen = () => {
       let userStories: Story[] = [];
 
       if (activeTab === 'stories') {
-        // Load user's stories
+        // Load user's recorded stories
         userStories = mockDataGenerator.generateUserStories(userId, 10);
       } else if (activeTab === 'saved') {
         // Load saved stories (only for own profile)
         if (isOwnProfile) {
           userStories = mockDataGenerator.generateStories(8);
         }
-      } else if (activeTab === 'family') {
-        // Load family stories
-        userStories = mockDataGenerator.generateStories(6);
       }
 
       setStories(userStories);
@@ -98,17 +96,24 @@ export const ProfileScreen = () => {
     navigation.navigate('StoryDetail' as never, { storyId: story.id } as never);
   };
 
+  const handleRecord = () => {
+    navigation.navigate('Recording' as never);
+  };
+
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
   };
 
   const handleEditProfile = () => {
-    // Navigate to edit profile screen
     console.log('Edit profile');
   };
 
-  const handleRecordStory = () => {
-    navigation.navigate('Recording' as never);
+  const handleDebug = () => {
+    navigation.navigate('Debug' as never);
+  };
+
+  const handleLogout = () => {
+    useAuthStore.getState().logout();
   };
 
   const renderTab = (tab: TabType, label: string, icon: string) => (
@@ -168,14 +173,20 @@ export const ProfileScreen = () => {
         <View style={styles.actions}>
           {isOwnProfile ? (
             <>
-              <PrimaryButton
-                title="Record Story"
-                onPress={handleRecordStory}
-              />
               <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
                 <Icon name="pencil-outline" size={20} color={Colors.primary} />
                 <Text style={styles.editButtonText}>Edit Profile</Text>
               </TouchableOpacity>
+              <View style={styles.profileButtons}>
+                <TouchableOpacity style={styles.debugButton} onPress={handleDebug}>
+                  <Icon name="bug" size={18} color={Colors.textSecondary} />
+                  <Text style={styles.debugButtonText}>Developer Tools</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                  <Icon name="logout" size={18} color={Colors.error} />
+                  <Text style={styles.logoutButtonText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
             </>
           ) : (
             <PrimaryButton
@@ -188,49 +199,50 @@ export const ProfileScreen = () => {
 
       {/* Tabs */}
       <View style={styles.tabs}>
-        {renderTab('stories', 'Stories', 'video-outline')}
-        {renderTab('family', 'Family', 'account-group-outline')}
+        {renderTab('stories', 'My Stories', 'video-outline')}
         {isOwnProfile && renderTab('saved', 'Saved', 'bookmark-outline')}
       </View>
     </View>
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Icon
-        name={activeTab === 'stories' ? 'video-outline' : 'bookmark-outline'}
-        size={64}
-        color={Colors.textSecondary}
-      />
-      <Text style={styles.emptyTitle}>
-        {activeTab === 'stories' ? 'No Stories Yet' : 'No Saved Stories'}
-      </Text>
-      <Text style={styles.emptyText}>
-        {activeTab === 'stories'
-          ? 'Start recording to share your family\'s oral history.'
-          : 'Stories you save will appear here.'}
-      </Text>
+  const renderEmpty = () => {
+    if (loading) {
+      return <LoadingSpinner message="Loading..." />;
+    }
+    return (
+      <View style={styles.emptyContainer}>
+        <Icon
+          name={activeTab === 'stories' ? 'video-outline' : 'bookmark-outline'}
+          size={64}
+          color={Colors.textSecondary}
+        />
+        <Text style={styles.emptyTitle}>
+          {activeTab === 'stories' ? 'No Stories Yet' : 'No Saved Stories'}
+        </Text>
+        <Text style={styles.emptyText}>
+          {activeTab === 'stories'
+            ? 'Start recording to preserve your family\'s oral history.'
+            : 'Stories you save will appear here.'}
+        </Text>
+      </View>
+    );
+  };
+
+  const renderListHeader = () => (
+    <View>
+      {renderHeader()}
     </View>
   );
-
-  if (loading && !refreshing && stories.length === 0) {
-    return (
-      <SafeAreaView style={styles.container}>
-        {renderHeader()}
-        <LoadingSpinner message="Loading profile..." />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={stories}
+        data={loading ? [] : stories}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <StoryCard story={item} onPress={handleStoryPress} />
         )}
-        ListHeaderComponent={renderHeader}
+        ListHeaderComponent={renderListHeader}
         ListEmptyComponent={renderEmpty}
         contentContainerStyle={styles.list}
         refreshControl={
@@ -335,6 +347,41 @@ const styles = StyleSheet.create({
     ...Typography.button,
     color: Colors.primary,
   },
+  profileButtons: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    marginTop: Spacing.sm,
+  },
+  debugButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.medium,
+    backgroundColor: Colors.cream,
+  },
+  debugButtonText: {
+    ...Typography.caption,
+    color: Colors.textSecondary,
+    fontWeight: '600',
+  },
+  logoutButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.medium,
+    backgroundColor: Colors.cream,
+  },
+  logoutButtonText: {
+    ...Typography.caption,
+    color: Colors.error,
+    fontWeight: '600',
+  },
   tabs: {
     flexDirection: 'row',
     borderBottomWidth: 1,
@@ -360,6 +407,10 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: Colors.primary,
+  },
+  recordButtonContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   emptyContainer: {
     alignItems: 'center',

@@ -25,19 +25,22 @@ export interface VideoMetadata {
   tags: string[];
   people: string[];
   podcastUrl?: string;
+  viewCount?: number;
+  likeCount?: number;
+  shareCount?: number;
 }
 
 export const GRIOT_VIDEOS: VideoMetadata[] = [
   {
     id: "mE7xK2qR9Ld",
     thumbnail: "https://res.cloudinary.com/ducxigdil/image/upload/v1739667555/Screenshot_62_wjthuw.png",
-    title: "Mrs. Clark Talks Black Prisoner Cadavers",
+    title: "Irene Clark — Chapter One: Black Prisoner Cadavers",
     interviewees: ["Irene Clark"],
     description: "Irene Clark examines the historical use of black prisoners' cadavers in medical schools without family consent. This legal practice primarily benefited white institutions while restricting white cadavers from black schools.",
     duration: "3:00",
     createdDate: "2024-08-25T13:10:00Z",
     videoUrl: "https://www.youtube.com/watch?v=mE1PTJeDBXI",
-    featured: true,
+    featured: false,
     historicalContext: [
       {
         year: 1926,
@@ -76,7 +79,7 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
         }
       }
     ],
-    tags: ["Personal Stories", "Work & Employment", "Education", "Resilience", "Brooklyn", "North Carolina", "Migration"],
+    tags: ["Personal Stories", "Work & Employment", "Education", "Resilience", "Brooklyn", "New York", "North Carolina", "Migration"],
     people: ["Gladys M. Williams"]
   },
   {
@@ -110,7 +113,7 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
     duration: "9:36",
     createdDate: "2024-11-17T08:45:00Z",
     videoUrl: "https://www.youtube.com/watch?v=meR02ie2lYg",
-    featured: true,
+    featured: false,
     historicalContext: [
       {
         year: 2001,
@@ -161,7 +164,7 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
     duration: "5:14",
     createdDate: "2025-01-12T12:15:00Z",
     videoUrl: "https://www.youtube.com/watch?v=Wygd0hwc7iA",
-    featured: true,
+    featured: false,
     historicalContext: [
       {
         year: 1958,
@@ -177,9 +180,9 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
   {
     id: "Y4xON7_lXUe",
     thumbnail: "https://img.youtube.com/vi/Y48ON7_lUXE/0.jpg",
-    title: "Dr. Oliver T. Reid Reflects on Growing Up Between Danger and Sanctuary",
+    title: "Dr. Oliver T. Reid — Chapter One: Growing Up Between Danger and Sanctuary",
     interviewees: ["Dr. Oliver T. Reid"],
-    description: "Dr. Oliver T. Reid reflects on the complicated journey of growing into his own name, sharing how \"Oliver\" once felt like a burden until he uncovered the powerful legacy behind it—a grandfather who rose from enslavement to reclaim the very land his family once worked. He traces the nicknames that marked different chapters of his life, the move from Concord to Charlotte in North Carolina, and the Boys and Girls Club that became a rare place of safety and belonging during a turbulent childhood. Through heritage, hardship, and the people who held him up, he tells the story of learning to take pride in the name he once rejected.",
+    description: "Dr. Oliver T. Reid reflects on the complicated journey of growing into his own name, sharing how \"Oliver\" once felt like a burden until he uncovered the powerful legacy behind it—a grandfather who rose from enslavement to reclaim the very land his family once worked. He traces the nicknames that marked different chapters of his life, the move from Concord to Charlotte in North Carolina, and the Boys and Girls Club that became a rare place of safety and belonging during a turbulent childhood. Through heritage, hardship, and the people who held him up, he tells the story of learning to take pride in the name he once rejected. This is Chapter One of Oliver's story. More chapters coming soon.",
     duration: "4:39",
     createdDate: "2026-01-31T12:00:00Z",
     videoUrl: "https://www.youtube.com/watch?v=Y48ON7_lUXE",
@@ -206,9 +209,9 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
   {
     id: "Ue1a7sw8xW0",
     thumbnail: "https://img.youtube.com/vi/Uea17sw8xW0/0.jpg",
-    title: "Roots, Work, and Quiet Strength with Rickey Thomas",
+    title: "Rickey Thomas — Chapter One: Roots, Work, and Quiet Strength",
     interviewees: ["Rickey Gerard Thomas"],
-    description: "Rickey Gerard Thomas reflects on his upbringing in Brooklyn as the son of Southern parents who built a new life after meeting at the Brooklyn Navy Yard. He describes his father's influence as a hardworking Navy veteran–turned–plumber whose consistency shaped Rickey's own quiet, steady approach to life. The interview traces the dynamics of a large family, the personalities of his siblings, and the lessons absorbed from watching people work, study, and find their way. Woven through his memories is a sense of place—how the streets, the block, and the rhythm of New York instilled awareness, resilience, and a belief that true character shows itself through everyday consistency.",
+    description: "Rickey Gerard Thomas reflects on his upbringing in Brooklyn as the son of Southern parents who built a new life after meeting at the Brooklyn Navy Yard. He describes his father's influence as a hardworking Navy veteran–turned–plumber whose consistency shaped Rickey's own quiet, steady approach to life. The interview traces the dynamics of a large family, the personalities of his siblings, and the lessons absorbed from watching people work, study, and find their way. Woven through his memories is a sense of place—how the streets, the block, and the rhythm of New York instilled awareness, resilience, and a belief that true character shows itself through everyday consistency. This is Chapter One of Rickey's story. More chapters coming soon.",
     duration: "6:20",
     createdDate: "2026-02-09T12:00:00Z",
     videoUrl: "https://www.youtube.com/watch?v=Uea17sw8xW0",
@@ -241,10 +244,102 @@ export const GRIOT_VIDEOS: VideoMetadata[] = [
         }
       }
     ],
-    tags: ["North Carolina", "Raleigh", "Brooklyn", "Boys and Girls Club", "Childhood", "Heritage", "Personal Stories", "Resilience", "Family History", "Migration", "Work & Employment", "Military Service"],
+    tags: ["North Carolina", "Raleigh", "Brooklyn", "New York", "Boys and Girls Club", "Childhood", "Heritage", "Personal Stories", "Resilience", "Family History", "Migration", "Work & Employment", "Military Service"],
     people: ["Rickey Gerard Thomas"]
+  },
+  {
+    id: "Ln2yR8iCh4d",
+    thumbnail: "https://img.youtube.com/vi/mBngYEV7_cc/0.jpg",
+    title: "Lynette Richardson — Chapter One: The Lessons of Home and the Lower East Side",
+    interviewees: ["Lynette Richardson"],
+    description: "Lynette Richardson reflects on a childhood shaped by the warmth, discipline, and creativity of her family on Manhattan's Lower East Side, where home was defined less by geography and more by the people who taught her how to see the world. She describes a community anchored by steady work—school crossing guards, construction crews, taxi drivers—and a mother whose presence and purpose set the rhythm of her early life. Through memories of neighborhood jobs, school influences, and the cultural lessons woven into daily life, Lynette traces how her upbringing instilled resilience, identity, and a deep sense of belonging. Her story reveals how family, community, and place become the map one follows long after childhood ends. This is Chapter One of Lynette's story. More chapters coming soon.",
+    duration: "4:32",
+    createdDate: "2026-02-18T12:00:00Z",
+    videoUrl: "https://www.youtube.com/watch?v=mBngYEV7_cc",
+    podcastUrl: "https://open.spotify.com/episode/4o9wuMJ0dLzBMHydGxRlGh?si=TLiqo-3bTKKKfNK966uqRw",
+    featured: true,
+    historicalContext: [
+      {
+        year: 1980,
+        location: {
+          name: "Lower East Side, Manhattan, New York",
+          coordinates: [40.715, -73.985]
+        }
+      }
+    ],
+    tags: ["Childhood", "Heritage", "Personal Stories", "Work & Employment", "Family History", "Manhattan", "New York"],
+    people: ["Lynette Richardson"]
+  },
+  {
+    id: "Cr2AfR8iCa9",
+    thumbnail: "https://img.youtube.com/vi/DIwtQ9tLfa0/0.jpg",
+    title: "Irene Clark — Chapter Two: Confronting the Stereotypes of Africa",
+    interviewees: ["Irene Clark"],
+    description: "Irene Clark reflects on how misinformation and stigma have long distorted Western views of Africa, from travel ads that separate Egypt from the continent to the fearful stereotypes echoed by earlier generations. She contrasts those narratives with her own travels across Egypt, Ethiopia, Eritrea, Swaziland, and South Africa, where she witnessed modern cities, deep ingenuity, and a living history far richer than outsiders imagine. Her story underscores the power of seeing Africa firsthand and the profound impact of standing in places like the slave castles, where history becomes impossible to ignore.",
+    duration: "3:28",
+    createdDate: "2026-02-25T12:00:00Z",
+    videoUrl: "https://www.youtube.com/watch?v=DIwtQ9tLfa0",
+    podcastUrl: "https://open.spotify.com/episode/6VjeQAGOQAIPaEo9uAyrVB?si=f3UsWjiXRtyCJo4UsBJhbg",
+    featured: true,
+    historicalContext: [
+      {
+        year: 1970,
+        location: {
+          name: "Africa",
+          coordinates: [28.0, 10.0]
+        }
+      }
+    ],
+    tags: ["Africa", "Heritage", "Personal Stories", "Migration", "Historical Exploration", "Education", "Cultural Misrepresentation", "Travel"],
+    people: ["Irene Clark"]
+  },
+  {
+    id: "q7F2mX9BLaP",
+    thumbnail: "https://img.youtube.com/vi/gDF5Soer0is/0.jpg",
+    title: "David E. Reid — Chapter One: Growing Up with Faith, Family, and Southern Traditions",
+    interviewees: ["David E. Reid"],
+    description: "David E. Reid reflects on his upbringing in Reidsville, North Carolina, where he was raised by his mother and grandmother after his father left during his early childhood. He describes a tight-knit, church-centered household rooted in modest means, homegrown food, and shared community values. His memories center on the women who shaped him—especially through cooking, compassion, and lessons about doing good for others. Now 84, he looks back with warmth on the foods, traditions, and moral grounding that defined his early life and continue to guide his character today.",
+    duration: "5:01",
+    createdDate: "2026-03-07T12:00:00Z",
+    videoUrl: "https://www.youtube.com/watch?v=gDF5Soer0is",
+    podcastUrl: "https://open.spotify.com/episode/2OqMFHM7zLTcK8LtNOAJql?si=rWen3jJrQMOSskKFY3Quog",
+    featured: true,
+    historicalContext: [
+      {
+        year: 1940,
+        location: {
+          name: "Reidsville, North Carolina",
+          coordinates: [36.35486, -79.66447]
+        }
+      }
+    ],
+    tags: ["Reidsville", "North Carolina", "Personal Stories", "Childhood", "Family History", "Family Responsibility", "Heritage", "Church Life", "Southern Cooking", "Rural Life", "Community Sharing"],
+    people: ["David E. Reid"]
   }
 ];
+
+// Generate deterministic mock engagement stats from video ID
+const generateMockStats = (id: string) => {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash |= 0;
+  }
+  const seed = Math.abs(hash);
+  return {
+    viewCount: 500 + (seed % 9500),
+    likeCount: 20 + (seed % 480),
+    shareCount: 5 + (seed % 95),
+  };
+};
+
+// Apply mock stats to all videos
+GRIOT_VIDEOS.forEach(video => {
+  const stats = generateMockStats(video.id);
+  video.viewCount = stats.viewCount;
+  video.likeCount = stats.likeCount;
+  video.shareCount = stats.shareCount;
+});
 
 export const getFeaturedVideos = (): VideoMetadata[] => {
   return GRIOT_VIDEOS.filter(v => v.featured);
@@ -260,4 +355,16 @@ export const getVideosByTag = (tag: string): VideoMetadata[] => {
 
 export const getVideosByPerson = (person: string): VideoMetadata[] => {
   return GRIOT_VIDEOS.filter(v => v.people.includes(person));
+};
+
+export const getVideosByFamilyMembers = (memberNames: string[]): VideoMetadata[] => {
+  return GRIOT_VIDEOS.filter(v =>
+    v.interviewees.some(name => memberNames.includes(name)) ||
+    v.people.some(name => memberNames.includes(name))
+  );
+};
+
+export const getYouTubeVideoId = (url: string): string | null => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+  return match ? match[1] : null;
 };

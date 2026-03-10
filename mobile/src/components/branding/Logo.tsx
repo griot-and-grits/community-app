@@ -20,13 +20,10 @@ export const Logo: React.FC<LogoProps> = ({
   showTitle = false,
   showTagline = false,
 }) => {
-  // Use full logo for medium/large, icon for small
-  const logoSource = size === 'small'
-    ? require('@/assets/images/griot-grits-icon.png')
-    : require('@/assets/images/griot-grits-logo.png');
+  const logoSource = require('@/assets/images/griot-grits-logo.png');
 
   const sizes = {
-    small: { width: 50, height: 50 },      // Icon only
+    small: { width: 120, height: 50 },      // Logo scaled down
     medium: { width: 220, height: 80 },    // Full logo
     large: { width: 300, height: 110 },    // Full logo larger
   };

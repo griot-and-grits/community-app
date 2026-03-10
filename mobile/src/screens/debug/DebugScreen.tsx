@@ -8,9 +8,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { useRecordingStore } from '@/store/recordingStore';
 import { useUploadQueueStore } from '@/store/uploadQueueStore';
+import { useAuthStore } from '@/store/authStore';
 import { connectivityMonitor, ConnectivityStatus } from '@/services/sync/ConnectivityMonitor';
 import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
 
@@ -20,6 +22,9 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/styles/tokens';
  * Developer screen to test and showcase Phase 2 infrastructure
  */
 export const DebugScreen = () => {
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+  const insets = useSafeAreaInsets();
   const [connectivityStatus, setConnectivityStatus] = useState<ConnectivityStatus>(
     connectivityMonitor.getStatus()
   );
@@ -134,7 +139,7 @@ export const DebugScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.xxl }]}>
         <Text style={styles.title}>Phase 2 Infrastructure Demo</Text>
 
         {/* Connectivity Monitor */}
@@ -279,6 +284,36 @@ export const DebugScreen = () => {
               ✅ Upload Queue - Persistent upload management
             </Text>
           </View>
+        </View>
+
+        {/* Account Info */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>👤 Account Info</Text>
+          <View style={styles.card}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Name:</Text>
+              <Text style={styles.value}>{user?.name || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Email:</Text>
+              <Text style={styles.value}>{user?.email || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Membership:</Text>
+              <Text style={styles.value}>{user?.membershipTier?.toUpperCase() || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Storage:</Text>
+              <Text style={styles.value}>
+                {((user?.storageUsed || 0) / 1073741824).toFixed(2)} GB / {((user?.storageQuota || 0) / 1073741824).toFixed(0)} GB
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Logout */}
+        <View style={styles.section}>
+          <PrimaryButton title="Logout" onPress={logout} />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -10,6 +10,7 @@ import {
   Share,
 } from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Video from 'react-native-video';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
@@ -31,6 +32,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 export const StoryDetailScreen = () => {
   const route = useRoute<StoryDetailRouteProp>();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const { storyId } = route.params;
 
   const [story, setStory] = useState<Story | null>(null);
@@ -127,7 +129,7 @@ export const StoryDetailScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.lg }}>
         {/* Video Player */}
         <View style={styles.videoContainer}>
           <Video

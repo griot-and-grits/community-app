@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
+import { SecondaryButton } from '@/components/common/SecondaryButton';
 import { Logo } from '@/components/branding/Logo';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
@@ -29,6 +30,10 @@ export const HomeScreen = () => {
 
   const handleRecord = () => {
     navigation.navigate('Recording' as never);
+  };
+
+  const handleAskGriot = () => {
+    navigation.navigate('AskTheGriot' as never);
   };
 
   return (
@@ -63,37 +68,31 @@ export const HomeScreen = () => {
         {/* Quick Actions */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.card}>
-            <Icon name="video" size={48} color={Colors.primary} />
-            <Text style={styles.cardTitle}>Record Family Story</Text>
-            <Text style={styles.cardDescription}>
-              Capture precious memories and oral histories
-            </Text>
-            <PrimaryButton
-              title="Start Recording"
-              onPress={handleRecord}
-              style={styles.actionButton}
-            />
-          </View>
-        </View>
-
-        {/* Implementation Status */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Development Status</Text>
-          <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>Phase 2: Foundation Complete ✅</Text>
-            <Text style={styles.infoText}>
-              • Navigation & Authentication{'\n'}
-              • State Management (Zustand){'\n'}
-              • API Client Infrastructure{'\n'}
-              • UI Component Library
-            </Text>
-            <Text style={[styles.infoTitle, { marginTop: Spacing.md }]}>
-              Next: Phase 3 - Recording Feature
-            </Text>
-            <Text style={styles.infoText}>
-              Ready to implement video recording, editing, and upload functionality
-            </Text>
+          <View style={styles.actionsGrid}>
+            <View style={styles.actionCard}>
+              <Icon name="video" size={40} color={Colors.primary} />
+              <Text style={styles.actionCardTitle}>Record Story</Text>
+              <Text style={styles.actionCardDescription}>
+                Capture precious memories
+              </Text>
+              <PrimaryButton
+                title="Record"
+                onPress={handleRecord}
+                style={styles.actionButton}
+              />
+            </View>
+            <View style={styles.actionCard}>
+              <Icon name="book-open-variant" size={40} color={Colors.primary} />
+              <Text style={styles.actionCardTitle}>Ask the Griot</Text>
+              <Text style={styles.actionCardDescription}>
+                Explore your family history
+              </Text>
+              <SecondaryButton
+                title="Ask"
+                onPress={handleAskGriot}
+                style={styles.actionButton}
+              />
+            </View>
           </View>
         </View>
 
@@ -169,34 +168,44 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     marginBottom: Spacing.md,
   },
-  card: {
+  statusCard: {
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.medium,
-    padding: Spacing.lg,
-    alignItems: 'center',
-    ...Colors.elevation.small,
-  },
-  statusCard: {
+    padding: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
+    ...Colors.elevation.small,
   },
   statusText: {
-    ...Typography.body,
+    ...Typography.bodySmall,
     color: Colors.textPrimary,
   },
-  cardTitle: {
-    ...Typography.h3,
+  actionsGrid: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  actionCard: {
+    flex: 1,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.medium,
+    padding: Spacing.md,
+    alignItems: 'center',
+    ...Colors.elevation.small,
+  },
+  actionCardTitle: {
+    ...Typography.h5,
     color: Colors.textPrimary,
-    marginTop: Spacing.md,
+    marginTop: Spacing.sm,
     marginBottom: Spacing.xs,
+    textAlign: 'center',
   },
-  cardDescription: {
-    ...Typography.body,
+  actionCardDescription: {
+    ...Typography.caption,
     color: Colors.textSecondary,
     textAlign: 'center',
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
   actionButton: {
     width: '100%',

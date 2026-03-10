@@ -27,16 +27,26 @@ export const TAGS: FilterItem[] = [
   { name: "Migration", popularity: 0.6 },
   { name: "Historical Exploitation", popularity: 0.5 },
   { name: "Military Service", popularity: 0.5 },
+  { name: "New York", popularity: 0.5 },
   { name: "Medical Ethics", popularity: 0.4 },
   { name: "World Trade Center", popularity: 0.4 },
   { name: "Air Force", popularity: 0.4 },
   { name: "Brooklyn", popularity: 0.4 },
   { name: "North Carolina", popularity: 0.4 },
   { name: "Raleigh", popularity: 0.4 },
+  { name: "Manhattan", popularity: 0.4 },
   { name: "Family Responsibility", popularity: 0.4 },
   { name: "Boys and Girls Club", popularity: 0.4 },
   { name: "Charlotte", popularity: 0.4 },
-  { name: "Weather Events", popularity: 0.3 }
+  { name: "Weather Events", popularity: 0.3 },
+  { name: "Africa", popularity: 0.3 },
+  { name: "Travel", popularity: 0.3 },
+  { name: "Cultural Misrepresentation", popularity: 0.3 },
+  { name: "Historical Exploration", popularity: 0.3 },
+  { name: "Church Life", popularity: 0.3 },
+  { name: "Southern Cooking", popularity: 0.3 },
+  { name: "Rural Life", popularity: 0.3 },
+  { name: "Community Sharing", popularity: 0.3 }
 ];
 
 export const PEOPLE: FilterItem[] = [
@@ -47,8 +57,21 @@ export const PEOPLE: FilterItem[] = [
   { name: "Sharon Burwell McDuffie", popularity: 1.0 },
   { name: "Irene Clark", popularity: 1.0 },
   { name: "Dr. Oliver T. Reid", popularity: 1.0 },
-  { name: "Rickey Gerard Thomas", popularity: 1.0 }
+  { name: "Rickey Gerard Thomas", popularity: 1.0 },
+  { name: "Lynette Richardson", popularity: 1.0 },
+  { name: "David E. Reid", popularity: 1.0 }
 ];
+
+// Mock family members for development (matches real people in video data)
+export const MOCK_FAMILY_MEMBERS: string[] = [
+  "Ty McDuffie",
+  "Sharon McDuffie",
+  "Sharon Burwell McDuffie",
+];
+
+export const getFamilyMembers = (): string[] => {
+  return MOCK_FAMILY_MEMBERS;
+};
 
 export const getPopularTags = (minPopularity: number = 0.8): FilterItem[] => {
   return TAGS.filter(tag => tag.popularity >= minPopularity);
